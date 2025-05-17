@@ -1,0 +1,119 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Website for the family crew company
+
+# Template to create a static website hosted on S3 with IAM user access
+# This template creates an S3 bucket for hosting a static website and an IAM user with access to the bucket.
+# The S3 bucket is configured to allow public access to the website content.
+# The IAM user is granted permissions to get, put, and list objects in the bucket.
+# The template also includes a bucket policy to allow public access to the website content.
+# The bucket name is passed as a parameter to the template.
+# The IAM user is created with an access key for programmatic access to the bucket.
+# The template outputs the bucket name and the access key for the IAM user.
+# The template is designed to be used with AWS CloudFormation to automate the creation of the resources.
+# The template is written in YAML format and follows the AWS CloudFormation syntax
+
+Parameters:
+  BucketName:
+    Type: String
+    Default: "www.thefamilycrew.com"
+    Description: "The name of the S3 bucket"
+
+Resources:
+##############
+# S3 Bucket for the-family-crew-website
+##############
+
+  thefamilycrewwebsitebucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Ref BucketName
+      #AccessControl: PublicRead
+      WebsiteConfiguration:
+        IndexDocument: "index.html"
+        ErrorDocument: "error.html"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: ObjectWriter
+
+  MyBucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref BucketName
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Join
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref BucketName
+                  - '/*'
+          
+           # Condition:
+            #  StringLike:
+             #   'aws:Referer':
+              #    - 'http://www.thefamilycrew.com/*'
+               #   - 'http://thefamilycrew.net/*'
+
+##############
+# IAM Role to access S3 Bucket for the-family-crew-website
+##############
+
+  S3User:
+    Type: "AWS::IAM::User"
+    Properties:
+      UserName: "S3User"  # Define a unique username
+      Path: "/MyIAMUsers/" # Optional:  Path for organizing users
+      Policies:
+      - PolicyName: "S3Access"
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Effect: "Allow"
+            Action:
+            - "s3:GetObject"
+            - "s3:PutObject"
+            - "s3:ListBucket"
+            Resource:  
+              - !Join
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref BucketName
+              - !Join
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref BucketName
+                  - '/*'
+            #- "arn:aws:s3:::${!Ref BucketName}" #  Specific bucket ARN
+            #- "arn:aws:s3:::${!Ref BucketName}/*" #  Objects in the bucket
+  S3UserAccessKey:
+    Type: "AWS::IAM::AccessKey"
+    Properties:
+      UserName: !Ref S3User
+      Status: "Active"
+
+
+###########
+# Outputs
+###########
+
+Outputs:
+  BucketName:
+    Description: "S3 Bucket Name"
+    Value: !Ref BucketName
+
+  AccessKeyId:
+    Description: Access Key ID for the user
+    Value: !Ref S3UserAccessKey
+  
+  SecretAccessKey:
+    Description: Secret Access Key for the user
+    Value: !GetAtt S3UserAccessKey.SecretAccessKey
+
