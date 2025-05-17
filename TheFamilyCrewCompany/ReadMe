@@ -1,1 +1,7 @@
+Prerequisites:
+Knowledge of AWS and website hosting required.
+Prepaid Domain name required.
+
+Summary:
 This folder contains steps to create a Static website using HTML,CSS, AWS Resources like S3,CloudFormation, Route53, ACM, CloudWatch.
+YAML script is used in CloudFormation to create AWS resources.
