@@ -1,7 +1,8 @@
-Adrina Colaco - Experienced in IT analysis, Advanced Business analysis, and pursuing Data analysis
+Adrina Colaco - Experienced in IT analysis, Advanced Business analysis, and pursuing Cloud technologies.
 CBAP
 CSPO
 CSM
+AWS
 
 # MyProjects
 Repository for all my projects
@@ -10,3 +11,5 @@ AWS
 Peoplesoft HCM
 ASP.Net MVC
 C#.Net
+HTML
+CSS
