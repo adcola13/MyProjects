@@ -32,8 +32,3 @@ The layout adjusts seamlessly for desktops, tablets, and mobile devices using CS
 ├── index.html    # Main HTML page
 ├── style.css     # CSS file for styling
 └── images/       # Folder containing product images
-
-
-## 👨‍💻 Author
-
-**Darshan** 
